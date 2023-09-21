@@ -1,0 +1,120 @@
+---
+title: "data manipulation"
+author: "Zixuan Zhang"
+date: "2023-09-21"
+output: github_document
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+litters_bf = read_csv("data/FAS_litters.csv")
+litters_bf = janitor::clean_names(litters_bf)
+```
+```{r}
+pups_bf  = 
+  read_csv("./data/FAS_litters.csv") 
+pups_bf = janitor::clean_names(pups_bf)
+
+```
+
+#select 
+```{r}
+select(litters_bf, group, litter_number, gd0_weight)
+
+select(litters_bf,gd0_weight, group)
+
+select(litters_bf, group, gd0_weight:gd_of_birth )
+
+select(litters_bf,group,starts_with("pups"))
+
+select(litters_bf, -litter_number)
+
+select(litters_bf, -starts_with("gd"))
+
+select(litters_bf, group, litter_id =litter_number)
+
+```
+`
+```{r}
+rename(litters_bf, litter_id = litter_number)
+
+relocate(litters_bf, litter_number)
+```
+
+
+`select` vs ` pull`
+```{r}
+
+```
+
+```{r}
+filter(litters_bf, group == "Con7")
+
+filter(litters_bf, group == "Mod8")
+
+filter(litters_bf, group != "Con7")
+
+filter(litters_bf, gd0_weight > 20)
+
+filter(litters_bf, gd0_weight<= 20)
+
+filter(litters_bf, group == "Con7" | group == "Con8")
+
+filter(litters_bf, group %in% c("Con7", "Con8")
+       
+filter(litters_bf, !(group == "Con7"))      
+```
+
+
+#`mutute`
+this is use to change or add variable
+
+```{r}
+mutate(litters_bf, wt_gain = gd18_weight - gd0_weight)
+
+mutate(litters_bf, group = str_to_lower(group))
+
+mutate(
+  litters_bf,
+  wt_gain =gd18_weight - gd0_weight,
+  group = str_to_lower(group)
+)
+```
+
+what about missing row
+
+```{r}
+drop_na(litters_bf)
+drop_na(litters_bf, gd0_weight)
+
+```
+
+#  `arrange`
+
+```{r}
+arrange(litters_bf, gd0_weight)
+arrange(litters_bf, group, gd0_weight)
+
+```
+
+
+#pipes
+
+```{r}
+litters_bf =
+   read_csv("data/FAS_litters.csv") |> 
+  janitor::clean_names() |> 
+  select(-starts_with("pups")) |> 
+  mutate(
+    group = str_to_lower(group),
+    wt_gain = gd18_weight - gd0_weight, 
+    ) |> 
+  drop_na(wt_gain) |> 
+  arrange(group, wt_gain)
+  
+```
+
